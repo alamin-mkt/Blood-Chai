@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>রক্ত চাই | BloodBondhu — বাংলাদেশ জাতীয় রক্তদান ও ব্যবস্থাপনা নেটওয়ার্ক</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#E31E24',
+              green: '#00843D',
+              navy: '#152238',
+              surface: '#F8FAFC',
+              dark: '#0F172A'
+            }
+          },
+          fontFamily: {
+            bengali: ['"Hind Siliguri"', 'sans-serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Inter & Hind Siliguri (Bengali) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- QRCode.js, html2canvas, jsPDF for Card Generation & PDF Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Hind Siliguri', 'Inter', sans-serif;
+      background-color: #F8FAFC;
+      color: #152238;
+      overflow-x: hidden;
+    }
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+    .backface-hidden {
+      backface-visibility: hidden;
+    }
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+    /* Printable ID Card */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-id-card, #printable-id-card * {
+        visibility: visible;
+      }
+      #printable-id-card {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- ========================================== -->
+  <!-- 1. TOP EMERGENCY RIBBON                     -->
+  <!-- ========================================== -->
+  <div class="bg-slate-950 text-slate-200 text-xs py-2 px-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+      <div class="flex items-center gap-3">
+        <span class="flex items-center gap-1.5 font-bold text-red-400">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+          <span class="lang-bn">জাতীয় রক্তের জরুরি হেল্পলাইন: ১৬২৬৩</span>
+          <span class="lang-en hidden">National Blood Emergency Hotline: 16263</span>
+        </span>
+        <span class="text-slate-600 hidden md:inline">•</span>
+        <span class="text-slate-300 hidden md:inline">
+          <span class="lang-bn">৬৪ জেলায় সার্বক্ষণিক রক্ত সহায়তা নেটওয়ার্ক</span>
+          <span class="lang-en hidden">24/7 Blood Network Across All 64 Districts</span>
+        </span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Direct Quick Call buttons -->
+        <div class="flex items-center gap-2 text-[11px] font-mono">
+          <span class="text-slate-400">জরুরি সেবা:</span>
+          <span class="bg-red-600/30 text-red-400 px-2 py-0.5 rounded border border-red-500/30 font-bold">৯৯৯</span>
+          <span class="bg-amber-600/30 text-amber-400 px-2 py-0.5 rounded border border-amber-500/30 font-bold">১৬২৬৩</span>
+        </div>
+
+        <!-- Language Switcher -->
+        <button onclick="toggleLanguage()" class="flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-white text-xs px-2.5 py-1 rounded-lg border border-slate-700 font-bold transition">
+          <i data-lucide="languages" class="w-3.5 h-3.5"></i>
+          <span id="lang-btn-text">English</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 2. MAIN HEADER & NAVIGATION               -->
+  <!-- ========================================== -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2 group">
+        <img src="logo.png" alt="রক্ত চাই" class="h-11 sm:h-12 object-contain transition-transform group-hover:scale-105">
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-bold text-slate-700">
+        <a href="#search" class="px-3 py-2 rounded-lg hover:text-red-600 hover:bg-slate-50 transition">
+          <span class="lang-bn">রক্তদাতা খুঁজুন</span>
+          <span class="lang-en hidden">Find Donors</span>
+        </a>
+        <a href="#requests" class="px-3 py-2 rounded-lg hover:text-red-600 hover:bg-slate-50 transition">
+          <span class="lang-bn">জরুরি চাহিদা</span>
+          <span class="lang-en hidden">Blood Requests</span>
+        </a>
+        <a href="#id-card-section" class="px-3 py-2 rounded-lg hover:text-red-600 hover:bg-slate-50 transition flex items-center gap-1">
+          <i data-lucide="id-card" class="w-4 h-4 text-red-600"></i>
+          <span class="lang-bn">ডিজিটাল আইডি</span>
+          <span class="lang-en hidden">Digital ID</span>
+        </a>
+        <a href="#organizations" class="px-3 py-2 rounded-lg hover:text-red-600 hover:bg-slate-50 transition">
+          <span class="lang-bn">সংস্থাসমূহ</span>
+          <span class="lang-en hidden">Organizations</span>
+        </a>
+        <a href="#leaderboard" class="px-3 py-2 rounded-lg hover:text-red-600 hover:bg-slate-50 transition">
+          <span class="lang-bn">লিডারবোর্ড</span>
+          <span class="lang-en hidden">Leaderboard</span>
+        </a>
+        <a href="#campaigns" class="px-3 py-2 rounded-lg hover:text-red-600 hover:bg-slate-50 transition">
+          <span class="lang-bn">ক্যাম্পেইন</span>
+          <span class="lang-en hidden">Campaigns</span>
+        </a>
+        <a href="#faq" class="px-3 py-2 rounded-lg hover:text-red-600 hover:bg-slate-50 transition">
+          <span class="lang-bn">জিজ্ঞাসা</span>
+          <span class="lang-en hidden">FAQ</span>
+        </a>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2.5">
+        <button onclick="openModal('emergency-modal')" class="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm shadow-md transition transform active:scale-95">
+          <i data-lucide="heart" class="w-4 h-4 fill-white animate-pulse"></i>
+          <span class="lang-bn">জরুরি আবেদন</span>
+          <span class="lang-en hidden">Emergency Request</span>
+        </button>
+
+        <button onclick="openModal('register-modal')" class="hidden sm:flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow transition">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span class="lang-bn">রক্তদাতা হন</span>
+          <span class="lang-en hidden">Join as Donor</span>
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-3">
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="openModal('emergency-modal'); toggleMobileMenu();" class="py-2.5 rounded-xl bg-red-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow">
+          <i data-lucide="heart" class="w-4 h-4 fill-white"></i>
+          <span class="lang-bn">জরুরি আবেদন</span>
+          <span class="lang-en hidden">Emergency Request</span>
+        </button>
+        <button onclick="openModal('register-modal'); toggleMobileMenu();" class="py-2.5 rounded-xl bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span class="lang-bn">রক্তদাতা হন</span>
+          <span class="lang-en hidden">Join as Donor</span>
+        </button>
+      </div>
+      <div class="flex flex-col space-y-2 pt-2 border-t border-slate-100 text-sm font-semibold">
+        <a href="#search" onclick="toggleMobileMenu()" class="py-2 px-3 hover:bg-slate-50 rounded-lg">রক্তদাতা খুঁজুন (Find Donors)</a>
+        <a href="#requests" onclick="toggleMobileMenu()" class="py-2 px-3 hover:bg-slate-50 rounded-lg">জরুরি চাহিদা (Requests)</a>
+        <a href="#id-card-section" onclick="toggleMobileMenu()" class="py-2 px-3 hover:bg-slate-50 rounded-lg">ডিজিটাল আইডি কার্ড (Digital ID)</a>
+        <a href="#organizations" onclick="toggleMobileMenu()" class="py-2 px-3 hover:bg-slate-50 rounded-lg">অনুমোদিত সংস্থাসমূহ (Organizations)</a>
+        <a href="#leaderboard" onclick="toggleMobileMenu()" class="py-2 px-3 hover:bg-slate-50 rounded-lg">জাতীয় লিডারবোর্ড (Leaderboard)</a>
+        <a href="#campaigns" onclick="toggleMobileMenu()" class="py-2 px-3 hover:bg-slate-50 rounded-lg">রক্তদান ক্যাম্পেইন (Campaigns)</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 3. HERO SECTION                            -->
+  <!-- ========================================== -->
+  <section class="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white pt-14 pb-24 px-4 sm:px-6 overflow-hidden">
+    <!-- Heartbeat radial background -->
+    <div class="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#E31E24_1px,transparent_1px)] [background-size:20px_20px]"></div>
+    <div class="absolute -top-32 -right-32 w-96 h-96 bg-red-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+      
+      <!-- Hero Left -->
+      <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-400 text-xs sm:text-sm font-semibold backdrop-blur">
+          <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+          <span class="lang-bn">বাংলাদেশ জাতীয় ডিজিটাল রক্তদান নেটওয়ার্ক</span>
+          <span class="lang-en hidden">Bangladesh National Digital Blood Donation Network</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+          <span class="lang-bn">
+            <span class="text-white block">জরুরি রক্ত খুঁজছেন?</span>
+            <span class="text-red-500 block mt-1 sm:mt-2">পাশে আছে রক্ত চাই</span>
+          </span>
+          <span class="lang-en hidden">
+            <span class="text-white block">Looking for Blood?</span>
+            <span class="text-red-500 block mt-1 sm:mt-2">Blood Chai is by Your Side</span>
+          </span>
+        </h1>
+
+        <p class="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed">
+          <span class="lang-bn">বাংলাদেশের প্রতিটি জেলা ও উপজেলায় ভেরিফাইড রক্তদাতা খুঁজুন, জরুরি রক্তের আবেদন করুন এবং অফিসিয়াল ডিজিটাল আইডি কার্ডের মাধ্যমে যুক্ত হোন।</span>
+          <span class="lang-en hidden">Find verified blood donors, broadcast emergency transfusions, and get your official QR-authenticated universal digital ID card.</span>
+        </p>
+
+        <!-- 3 CTA Buttons -->
+        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 pt-2">
+          <a href="#search" class="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm sm:text-base shadow-lg shadow-red-600/30 transition transform active:scale-95">
+            <i data-lucide="search" class="w-5 h-5"></i>
+            <span class="lang-bn">রক্তদাতা খুঁজুন</span>
+            <span class="lang-en hidden">Find Donors</span>
+          </a>
+
+          <button onclick="openModal('register-modal')" class="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-600/30 transition transform active:scale-95">
+            <i data-lucide="heart" class="w-5 h-5 fill-white"></i>
+            <span class="lang-bn">রক্তদাতা হিসেবে যুক্ত হন</span>
+            <span class="lang-en hidden">Become a Donor</span>
+          </button>
+
+          <button onclick="openModal('emergency-modal')" class="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-bold text-sm sm:text-base shadow transition">
+            <i data-lucide="activity" class="w-5 h-5 text-red-400"></i>
+            <span class="lang-bn">জরুরি রক্তের আবেদন</span>
+            <span class="lang-en hidden">Emergency Request</span>
+          </button>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-4 text-xs text-slate-400 font-semibold">
+          <div class="flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+            <span class="lang-bn">১০০% ভেরিফাইড রক্তদাতা</span>
+            <span class="lang-en hidden">100% Verified Donors</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400"></i>
+            <span class="lang-bn">সিকিউর ডিজিটাল আইডি</span>
+            <span class="lang-en hidden">Universal Digital ID</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
+            <span class="lang-bn">২৪/৭ ফ্রি সেবা</span>
+            <span class="lang-en hidden">24/7 Free Service</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Right: Subtle Decorative Emergency Response Element (Balanced & Responsive) -->
+      <div class="lg:col-span-5 flex flex-col items-center justify-center relative">
+        <!-- Ambient radial glow -->
+        <div class="absolute w-72 h-72 rounded-full bg-gradient-to-tr from-red-600/20 via-rose-500/15 to-transparent blur-3xl pointer-events-none -z-10 animate-pulse"></div>
+
+        <div class="w-full max-w-sm bg-gradient-to-b from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 sm:p-7 text-center shadow-2xl relative overflow-hidden group hover:border-red-500/30 transition-all duration-300">
+          <!-- Top subtle accent strip -->
+          <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-600 via-rose-500 to-emerald-500"></div>
+
+          <!-- Pulsing Blood Drop Icon -->
+          <div class="relative w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+            <div class="absolute inset-0 rounded-2xl bg-red-600/20 blur-xl animate-ping"></div>
+            <div class="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-red-600/30 via-red-900/40 to-slate-900 border border-red-500/30 flex items-center justify-center shadow-lg shadow-red-600/20">
+              <i data-lucide="droplet" class="w-10 h-10 fill-red-500 text-red-500 animate-pulse"></i>
+            </div>
+          </div>
+
+          <h3 class="font-bold text-lg sm:text-xl text-white">
+            <span class="lang-bn">সার্বক্ষণিক জরুরি রক্ত সেবা</span>
+            <span class="lang-en hidden">24/7 Emergency Blood Support</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+            <span class="lang-bn">বাংলাদেশের প্রতিটি প্রান্তে তাৎক্ষণিক ভেরিফাইড রক্ত সহায়তা নেটওয়ার্ক</span>
+            <span class="lang-en hidden">Instant Verified Blood Network Across All 64 Districts</span>
+          </p>
+
+          <!-- Quick Highlight Stat Badges -->
+          <div class="mt-5 grid grid-cols-2 gap-2.5 text-xs text-left">
+            <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/60 flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></div>
+              <div>
+                <span class="text-[10px] text-slate-400 block font-semibold">হটলাইন</span>
+                <span class="text-emerald-400 font-bold font-mono text-sm">১৬২৬৩</span>
+              </div>
+            </div>
+            <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/60 flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-red-400"></div>
+              <div>
+                <span class="text-[10px] text-slate-400 block font-semibold">জরুরি সেবা</span>
+                <span class="text-red-400 font-bold font-mono text-sm">৯৯৯</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 4. ADVANCED SEARCH BAR                     -->
+  <!-- ========================================== -->
+  <section id="search" class="max-w-6xl mx-auto px-4 -mt-12 sm:-mt-16 relative z-20">
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2 text-slate-900 font-bold text-base sm:text-lg">
+          <i data-lucide="droplet" class="w-5 h-5 text-red-600 fill-red-600"></i>
+          <span class="lang-bn">রক্তদাতা অনুসন্ধান ফিল্টার</span>
+          <span class="lang-en hidden">Search Blood Donors Directory</span>
+        </div>
+        <span class="text-xs text-slate-500">
+          <span class="lang-bn">রক্তের গ্রুপ ও জেলা নির্বাচন করুন</span>
+          <span class="lang-en hidden">Select Blood Group & Location</span>
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Blood Group -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">রক্তের গ্রুপ</label>
+          <select id="search-blood-group" onchange="filterDonors()" class="w-full h-11 px-3 bg-slate-50 border border-slate-300 rounded-xl font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+            <option value="">সকল গ্রুপ (All Groups)</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+        </div>
+
+        <!-- Division -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">বিভাগ (Division)</label>
+          <select id="search-division" onchange="updateDistricts(); filterDonors();" class="w-full h-11 px-3 bg-slate-50 border border-slate-300 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+            <option value="">সকল বিভাগ</option>
+            <option value="dhaka">ঢাকা (Dhaka)</option>
+            <option value="chattogram">চট্টগ্রাম (Chattogram)</option>
+            <option value="rajshahi">রাজশাহী (Rajshahi)</option>
+            <option value="khulna">খুলনা (Khulna)</option>
+            <option value="barishal">বরিশাল (Barishal)</option>
+            <option value="sylhet">সিলেট (Sylhet)</option>
+            <option value="rangpur">রংপুর (Rangpur)</option>
+            <option value="mymensingh">ময়মনসিংহ (Mymensingh)</option>
+          </select>
+        </div>
+
+        <!-- District -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">জেলা (District)</label>
+          <select id="search-district" onchange="filterDonors()" class="w-full h-11 px-3 bg-slate-50 border border-slate-300 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500">
+            <option value="">সকল জেলা (All Districts)</option>
+          </select>
+        </div>
+
+        <!-- Search button -->
+        <div class="flex items-end">
+          <button onclick="filterDonors()" class="w-full h-11 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md transition">
+            <i data-lucide="search" class="w-4 h-4"></i>
+            <span>ফিল্টার করুন</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 5. LIVE STATS COUNTER                      -->
+  <!-- ========================================== -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 mt-12">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
+        <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="users" class="w-5 h-5"></i>
+        </div>
+        <div id="stat-donors-count" class="text-2xl sm:text-3xl font-black text-slate-900">১৮,৪৫০+</div>
+        <div class="text-xs text-slate-500 font-bold uppercase mt-1">নিবন্ধিত রক্তদাতা</div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="heart" class="w-5 h-5 fill-emerald-600"></i>
+        </div>
+        <div id="stat-donations-count" class="text-2xl sm:text-3xl font-black text-slate-900">৪২,৩৮০+</div>
+        <div class="text-xs text-slate-500 font-bold uppercase mt-1">যাচাইকৃত রক্তদান</div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
+        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="activity" class="w-5 h-5"></i>
+        </div>
+        <div id="stat-requests-count" class="text-2xl sm:text-3xl font-black text-slate-900">৩টি</div>
+        <div class="text-xs text-slate-500 font-bold uppercase mt-1">সক্রিয় জরুরি আবেদন</div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="map-pin" class="w-5 h-5"></i>
+        </div>
+        <div id="stat-districts-count" class="text-2xl sm:text-3xl font-black text-slate-900">৬৪টি</div>
+        <div class="text-xs text-slate-500 font-bold uppercase mt-1">জেলায় সক্রিয় নেটওয়ার্ক</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 6. EMERGENCY BLOOD REQUESTS HIGHLIGHTS     -->
+  <!-- ========================================== -->
+  <section id="requests" class="max-w-7xl mx-auto px-4 sm:px-6 mt-16">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div>
+        <div class="inline-flex items-center gap-1.5 text-xs font-bold text-red-600 uppercase tracking-wider mb-1">
+          <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
+          <span>জরুরি রক্তের চাহিদা</span>
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900">তাৎক্ষণিক রক্ত প্রয়োজন (Live Requisitions)</h2>
+      </div>
+      <button onclick="openModal('emergency-modal')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm shadow">
+        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+        <span>+ আবেদন জমা দিন</span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="emergency-requests-container">
+      <!-- Card 1 -->
+      <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-red-600 text-white animate-pulse">CRITICAL</span>
+            <span class="text-xs font-mono text-slate-400">আজ • সকাল ১০:০০</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 border border-red-200 flex flex-col items-center justify-center flex-shrink-0">
+              <span class="text-2xl font-black text-red-600">O+</span>
+              <span class="text-[10px] text-red-500 font-bold">২ ব্যাগ</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900 leading-snug">তাহমিনা বেগম (৪৮ বছর)</h3>
+              <p class="text-xs text-slate-500 font-medium">ওপেন হার্ট বাইপাস সার্জারি</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 space-y-1 text-xs text-slate-600">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span class="font-bold text-slate-800">ঢাকা মেডিকেল কলেজ হাসপাতাল (DMCH)</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span>শাহবাগ, ঢাকা</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+          <a href="tel:+8801712345678" class="text-xs font-bold text-red-600 flex items-center gap-1">
+            <i data-lucide="phone-call" class="w-3.5 h-3.5"></i> +880 1712-345678
+          </a>
+          <button onclick="openDonatePledge('তাহমিনা বেগম', 'O+', 'ঢাকা মেডিকেল')" class="px-3 py-1.5 bg-slate-900 hover:bg-red-600 text-white rounded-lg text-xs font-bold transition">
+            আমি রক্ত দেবো
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-800">URGENT</span>
+            <span class="text-xs font-mono text-slate-400">আগামীকাল • দুপুর ৩:০০</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 border border-red-200 flex flex-col items-center justify-center flex-shrink-0">
+              <span class="text-2xl font-black text-red-600">B+</span>
+              <span class="text-[10px] text-red-500 font-bold">১ ব্যাগ</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900 leading-snug">শিশু আয়ান (৬ বছর)</h3>
+              <p class="text-xs text-slate-500 font-medium">থ্যালাসেমিয়া নিয়মিত রক্ত পরিসঞ্চালন</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 space-y-1 text-xs text-slate-600">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span class="font-bold text-slate-800">চট্টগ্রাম মেডিকেল কলেজ হাসপাতাল (CMCH)</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span>পাঁচলাইশ, চট্টগ্রাম</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+          <a href="tel:+8801819876543" class="text-xs font-bold text-red-600 flex items-center gap-1">
+            <i data-lucide="phone-call" class="w-3.5 h-3.5"></i> +880 1819-876543
+          </a>
+          <button onclick="openDonatePledge('শিশু আয়ান', 'B+', 'চট্টগ্রাম মেডিকেল')" class="px-3 py-1.5 bg-slate-900 hover:bg-red-600 text-white rounded-lg text-xs font-bold transition">
+            আমি রক্ত দেবো
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-800">NORMAL</span>
+            <span class="text-xs font-mono text-slate-400">৪ নভেম্বর • সকাল ১১:৩০</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 border border-red-200 flex flex-col items-center justify-center flex-shrink-0">
+              <span class="text-2xl font-black text-red-600">AB+</span>
+              <span class="text-[10px] text-red-500 font-bold">১ ব্যাগ</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900 leading-snug">জান্নাতুল ফেরদৌস (২৭ বছর)</h3>
+              <p class="text-xs text-slate-500 font-medium">সিজারিয়ান ডেলিভারি অপারেশন</p>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 space-y-1 text-xs text-slate-600">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span class="font-bold text-slate-800">বিএসএমএমইউ (পিজি হাসপাতাল)</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400"></i>
+              <span>শাহবাগ, ঢাকা</span>
+            </div>
+          </div>
+        </div>
+        <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+          <a href="tel:+8801913445566" class="text-xs font-bold text-red-600 flex items-center gap-1">
+            <i data-lucide="phone-call" class="w-3.5 h-3.5"></i> +880 1913-445566
+          </a>
+          <button onclick="openDonatePledge('জান্নাতুল ফেরদৌস', 'AB+', 'বিএসএমএমইউ')" class="px-3 py-1.5 bg-slate-900 hover:bg-red-600 text-white rounded-lg text-xs font-bold transition">
+            আমি রক্ত দেবো
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 7. RECENTLY AVAILABLE DONORS               -->
+  <!-- ========================================== -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 mt-16">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div>
+        <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">প্রস্তুত রক্তদাতা</div>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900">সম্প্রতি উপলব্ধ রক্তদাতাবৃন্দ</h2>
+      </div>
+      <span class="text-xs text-slate-400 font-mono">গোপনীয়তা নীতি অনুযায়ী সুরক্ষিত যোগাযোগ</span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="donors-grid">
+      <!-- Donor 1 -->
+      <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between donor-item" data-group="O+" data-division="dhaka" data-district="dhaka">
+        <div>
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <div class="w-14 h-14 rounded-full border-2 border-red-500 overflow-hidden bg-slate-100 flex items-center justify-center font-bold text-xl">
+                👨‍💼
+              </div>
+              <span class="absolute -bottom-1 -right-1 bg-red-600 text-white font-black text-xs px-1.5 py-0.5 rounded-md border border-white shadow">O+</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900">মাহমুদুর রহমান</h3>
+              <p class="text-xs text-slate-500 flex items-center gap-1">
+                <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i> ধানমন্ডি, ঢাকা
+              </p>
+            </div>
+          </div>
+          <div class="mt-4 bg-slate-50 rounded-xl p-3 space-y-1.5 text-xs">
+            <div class="flex justify-between text-slate-600">
+              <span>যাচাইকৃত দান:</span>
+              <span class="font-bold text-red-600">১৬ বার</span>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span>স্ট্যাটাস:</span>
+              <span class="text-emerald-600 font-bold flex items-center gap-1">✓ প্রস্তুত</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="openContactModal('মাহমুদুর রহমান', 'O+', 'DONOR-000001')" class="mt-4 w-full py-2 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-700 font-bold text-xs transition">
+          যোগাযোগের আবেদন পাঠান
+        </button>
+      </div>
+
+      <!-- Donor 2 -->
+      <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between donor-item" data-group="A+" data-division="dhaka" data-district="dhaka">
+        <div>
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <div class="w-14 h-14 rounded-full border-2 border-red-500 overflow-hidden bg-slate-100 flex items-center justify-center font-bold text-xl">
+                👩‍⚕️
+              </div>
+              <span class="absolute -bottom-1 -right-1 bg-red-600 text-white font-black text-xs px-1.5 py-0.5 rounded-md border border-white shadow">A+</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900">ফারহানা আক্তার</h3>
+              <p class="text-xs text-slate-500 flex items-center gap-1">
+                <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i> মিরপুর, ঢাকা
+              </p>
+            </div>
+          </div>
+          <div class="mt-4 bg-slate-50 rounded-xl p-3 space-y-1.5 text-xs">
+            <div class="flex justify-between text-slate-600">
+              <span>যাচাইকৃত দান:</span>
+              <span class="font-bold text-red-600">৮ বার</span>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span>স্ট্যাটাস:</span>
+              <span class="text-emerald-600 font-bold flex items-center gap-1">✓ প্রস্তুত</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="openContactModal('ফারহানা আক্তার', 'A+', 'DONOR-000002')" class="mt-4 w-full py-2 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-700 font-bold text-xs transition">
+          যোগাযোগের আবেদন পাঠান
+        </button>
+      </div>
+
+      <!-- Donor 3 -->
+      <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between donor-item" data-group="B+" data-division="chattogram" data-district="chattogram">
+        <div>
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <div class="w-14 h-14 rounded-full border-2 border-red-500 overflow-hidden bg-slate-100 flex items-center justify-center font-bold text-xl">
+                👨‍💻
+              </div>
+              <span class="absolute -bottom-1 -right-1 bg-red-600 text-white font-black text-xs px-1.5 py-0.5 rounded-md border border-white shadow">B+</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900">তানভীর হোসেন</h3>
+              <p class="text-xs text-slate-500 flex items-center gap-1">
+                <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i> কোতোয়ালী, চট্টগ্রাম
+              </p>
+            </div>
+          </div>
+          <div class="mt-4 bg-slate-50 rounded-xl p-3 space-y-1.5 text-xs">
+            <div class="flex justify-between text-slate-600">
+              <span>যাচাইকৃত দান:</span>
+              <span class="font-bold text-red-600">১২ বার</span>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span>স্ট্যাটাস:</span>
+              <span class="text-emerald-600 font-bold flex items-center gap-1">✓ প্রস্তুত</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="openContactModal('তানভীর হোসেন', 'B+', 'DONOR-000003')" class="mt-4 w-full py-2 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-700 font-bold text-xs transition">
+          যোগাযোগের আবেদন পাঠান
+        </button>
+      </div>
+
+      <!-- Donor 4 -->
+      <div class="bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between donor-item" data-group="O-" data-division="sylhet" data-district="sylhet">
+        <div>
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <div class="w-14 h-14 rounded-full border-2 border-red-500 overflow-hidden bg-slate-100 flex items-center justify-center font-bold text-xl">
+                👨‍🏫
+              </div>
+              <span class="absolute -bottom-1 -right-1 bg-red-600 text-white font-black text-xs px-1.5 py-0.5 rounded-md border border-white shadow">O-</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900">আরিফুল ইসলাম</h3>
+              <p class="text-xs text-slate-500 flex items-center gap-1">
+                <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i> জিন্দাবাজার, সিলেট
+              </p>
+            </div>
+          </div>
+          <div class="mt-4 bg-slate-50 rounded-xl p-3 space-y-1.5 text-xs">
+            <div class="flex justify-between text-slate-600">
+              <span>যাচাইকৃত দান:</span>
+              <span class="font-bold text-red-600">২৬ বার (Legend)</span>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span>স্ট্যাটাস:</span>
+              <span class="text-emerald-600 font-bold flex items-center gap-1">✓ প্রস্তুত</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="openContactModal('আরিফুল ইসলাম', 'O-', 'DONOR-000005')" class="mt-4 w-full py-2 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-700 font-bold text-xs transition">
+          যোগাযোগের আবেদন পাঠান
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 8. UNIVERSAL DIGITAL ID CARD CENTER        -->
+  <!-- ========================================== -->
+  <section id="id-card-section" class="max-w-7xl mx-auto px-4 sm:px-6 mt-20">
+    <div class="bg-slate-950 text-white rounded-3xl p-6 sm:p-12 border border-slate-800 shadow-2xl space-y-8">
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+        <div>
+          <div class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+            <span>ইউনিভার্সাল ডিজিটাল পরিচয়পত্র ও কিউআর ইঞ্জিন</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-black">অফিসিয়াল ডিজিটাল আইডি কার্ড সেন্টার</h2>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl">
+            আন্তর্জাতিক ক্রেডিট কার্ড মাপ (85.6mm x 54mm) অনুযায়ী প্রস্তুতকৃত। সরাসরি পিএনজি ও পিডিএফ ডাউনলোড ও প্রিন্ট করুন।
+          </p>
+        </div>
+
+        <!-- Role Selector Switcher -->
+        <div class="flex flex-wrap gap-2">
+          <button onclick="switchCardRole('donor')" id="btn-role-donor" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-red-600 text-white shadow">
+            Donor Card
+          </button>
+          <button onclick="switchCardRole('super_admin')" id="btn-role-super_admin" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">
+            Super Admin
+          </button>
+          <button onclick="switchCardRole('coordinator')" id="btn-role-coordinator" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">
+            Coordinator
+          </button>
+          <button onclick="switchCardRole('volunteer')" id="btn-role-volunteer" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700">
+            Volunteer
+          </button>
+        </div>
+      </div>
+
+      <!-- Card Display Area -->
+      <div class="flex flex-col items-center justify-center space-y-6">
+        
+        <!-- 3D Flippable Card Frame (85.6mm x 54mm ratio: 420px x 265px) -->
+        <div class="perspective-1000 py-2">
+          <div id="printable-id-card" class="relative w-[390px] h-[246px] sm:w-[440px] sm:h-[278px] transform-style-3d transition-transform duration-700 select-none">
+            
+            <!-- FRONT SIDE -->
+            <div id="card-front" class="absolute inset-0 rounded-2xl p-4 shadow-2xl text-white overflow-hidden border border-red-400 bg-gradient-to-br from-red-600 via-red-700 to-rose-900 backface-hidden flex flex-col justify-between">
+              <!-- Top bar -->
+              <div class="flex items-center justify-between border-b border-white/20 pb-2">
+                <img src="logo.png" alt="রক্ত চাই" class="h-8 object-contain brightness-0 invert">
+                <div class="text-right">
+                  <span id="card-role-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-white text-red-700">
+                    VERIFIED BLOOD DONOR
+                  </span>
+                  <p id="card-id-number" class="text-[9px] text-white/70 font-mono mt-0.5">DONOR-000001</p>
+                </div>
+              </div>
+
+              <!-- Middle details -->
+              <div class="flex items-center gap-3 my-auto">
+                <div class="relative flex-shrink-0">
+                  <div class="w-20 h-24 rounded-xl border-2 border-white/80 overflow-hidden bg-white/20 shadow-inner flex items-center justify-center text-4xl">
+                    👨‍⚕️
+                  </div>
+                  <div id="card-blood-badge" class="absolute -bottom-2 -right-2 bg-red-600 text-white font-black text-xs px-2 py-0.5 rounded-md border border-white shadow">
+                    O+
+                  </div>
+                </div>
+
+                <div class="flex-1 min-w-0 pr-1">
+                  <h3 id="card-name" class="font-bold text-base sm:text-lg text-white leading-tight truncate">
+                    মাহমুদুর রহমান
+                  </h3>
+                  <p id="card-area" class="text-xs text-white/80 font-medium truncate mt-0.5">
+                    Dhaka, Dhanmondi
+                  </p>
+
+                  <div class="mt-2 grid grid-cols-2 gap-1 text-[10px] text-white/90 bg-black/25 p-1.5 rounded-lg border border-white/10">
+                    <div>
+                      <span class="text-white/60 block text-[9px]">ইস্যুর তারিখ</span>
+                      <span class="font-mono">2026-01-15</span>
+                    </div>
+                    <div>
+                      <span class="text-white/60 block text-[9px]">স্ট্যাটাস</span>
+                      <span class="text-emerald-300 font-bold">✓ VERIFIED</span>
+                    </div>
+                    <div class="col-span-2 mt-0.5 pt-1 border-t border-white/10 flex justify-between items-center">
+                      <span class="text-white/70">যাচাইকৃত রক্তদান:</span>
+                      <span id="card-donations-count" class="font-bold text-amber-300">১৬ বার</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Live Dynamic QR Code -->
+                <div class="flex-shrink-0 flex flex-col items-center bg-white p-1 rounded-xl shadow-md border border-white/30">
+                  <div id="qrcode-container" class="w-16 h-16 flex items-center justify-center"></div>
+                  <span class="text-[8px] font-bold text-slate-800 tracking-tighter mt-0.5">SCAN TO VERIFY</span>
+                </div>
+              </div>
+
+              <!-- Bottom strip -->
+              <div class="flex items-center justify-between text-[9px] text-white/75 pt-1 border-t border-white/15">
+                <span>National Blood Donation Network • Bangladesh</span>
+                <span class="font-mono text-emerald-300 flex items-center gap-1 font-semibold">
+                  OFFICIAL DIGITAL ID
+                </span>
+              </div>
+            </div>
+
+            <!-- BACK SIDE -->
+            <div id="card-back" class="absolute inset-0 rounded-2xl p-4 shadow-2xl text-slate-100 overflow-hidden border border-red-400 bg-gradient-to-br from-red-600 via-red-700 to-rose-900 backface-hidden rotate-y-180 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between border-b border-white/20 pb-1">
+                  <span class="text-xs font-bold tracking-wider text-amber-300 flex items-center gap-1">
+                    CARDHOLDER TERMS & VERIFICATION
+                  </span>
+                  <span class="text-[10px] font-mono text-white/70">85.6mm x 54mm</span>
+                </div>
+                <div class="mt-2 space-y-1.5 text-[10px] leading-tight text-white/90">
+                  <p>• এই ডিজিটাল পরিচয়পত্রটি রক্ত চাই জাতীয় নেটওয়ার্ক কর্তৃক অনুমোদিত ও ভেরিফাইড।</p>
+                  <p>• যেকোনো হাসপাতালে কিউআর স্ক্যান করে তাৎক্ষণিক বৈধতা যাচাই করা যাবে।</p>
+                  <p>• জাতীয় জরুরি স্বাস্থ্য কল সেন্টার: ১৬২৬৩ | জরুরি সেবা: ৯৯৯</p>
+                </div>
+              </div>
+
+              <div class="bg-black/30 p-2 rounded-xl border border-white/10 flex items-center justify-between">
+                <div>
+                  <p class="text-[9px] text-white/60">Official Verification URL:</p>
+                  <p id="card-back-url" class="text-[10px] font-mono font-bold text-cyan-300 truncate max-w-[220px]">
+                    https://roktochai.gov.bd/verify/DONOR-000001
+                  </p>
+                </div>
+                <div class="text-right">
+                  <div class="font-serif italic text-xs text-white/90 font-bold border-b border-white/30 pb-0.5">
+                    Authority Signature
+                  </div>
+                  <p class="text-[8px] text-white/60 mt-0.5">National Directorate</p>
+                </div>
+              </div>
+              <div class="text-[8px] text-center text-white/60">
+                Emergency Blood Network • Support: support@roktochai.gov.bd
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls Toolbar -->
+        <div class="flex flex-wrap items-center justify-center gap-2 max-w-lg">
+          <button onclick="flipCard()" class="flex items-center gap-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl shadow transition">
+            <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+            <span id="flip-btn-text">পেছনের অংশ দেখুন (Flip)</span>
+          </button>
+
+          <button onclick="downloadCardPNG()" class="flex items-center gap-1.5 px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow transition">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>PNG ডাউনলোড</span>
+          </button>
+
+          <button onclick="downloadCardPDF()" class="flex items-center gap-1.5 px-3.5 py-2 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-xl shadow transition">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+            <span>PDF ডাউনলোড</span>
+          </button>
+
+          <button onclick="window.print()" class="flex items-center gap-1.5 px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-xl shadow transition">
+            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+            <span>প্রিন্ট করুন</span>
+          </button>
+
+          <button onclick="openVerificationModal()" class="flex items-center gap-1.5 px-3.5 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold rounded-xl shadow transition">
+            <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+            <span>কিউআর টেস্ট পেজ</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 9. HOW IT WORKS                            -->
+  <!-- ========================================== -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 mt-20">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="text-xs font-bold text-red-600 uppercase tracking-wider">সহজ ৩টি ধাপ</span>
+      <h2 class="text-2xl sm:text-4xl font-black text-slate-900 mt-1">কীভাবে কাজ করে রক্ত চাই?</h2>
+      <p class="text-sm text-slate-600 mt-2">
+        নিরাপত্তা ও গোপনীয়তা নিশ্চিত করে দেশের যেকোনো প্রান্তে দ্রুত রক্ত সহায়তার মানবিক নেটওয়ার্ক।
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 text-center relative">
+        <div class="w-14 h-14 rounded-2xl bg-red-100 text-red-600 font-black text-xl flex items-center justify-center mx-auto mb-4">
+          ১
+        </div>
+        <h3 class="font-bold text-lg text-slate-900 mb-2">রক্তদাতা খুঁজুন বা আবেদন করুন</h3>
+        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          হাসপাতাল, রক্তের গ্রুপ ও জেলা সিলেক্ট করে অবিলম্বে সার্চ করুন বা জরুরি আবেদন সাবমিট করুন।
+        </p>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 text-center relative">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 font-black text-xl flex items-center justify-center mx-auto mb-4">
+          ২
+        </div>
+        <h3 class="font-bold text-lg text-slate-900 mb-2">সুরক্ষিত সম্মতি ও সংযোগ</h3>
+        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          রক্তদাতার অনুমতি সাপেক্ষে সরাসরি যোগাযোগ নম্বর শেয়ার হয়। কোনো অবাঞ্ছিত কল বা স্প্যামিং নেই।
+        </p>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 text-center relative">
+        <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 font-black text-xl flex items-center justify-center mx-auto mb-4">
+          ৩
+        </div>
+        <h3 class="font-bold text-lg text-slate-900 mb-2">রক্তদান ও ডিজিটাল আইডি আপডেট</h3>
+        <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          হাসপাতালে রক্তদান সম্পন্ন করে প্রুফ সাবমিট করলেই পয়েন্ট, ব্যাজ এবং ডিজিটাল আইডিতে ভেরিফাইড সংখ্যা যুক্ত হয়।
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 10. ORGANIZATIONS DIRECTORY                -->
+  <!-- ========================================== -->
+  <section id="organizations" class="max-w-7xl mx-auto px-4 sm:px-6 mt-20">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div>
+        <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">অংশীদার সংস্থাসমূহ</div>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900">অনুমোদিত রক্তদান সংস্থাসমূহ</h2>
+      </div>
+      <span class="text-xs text-emerald-700 font-bold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+        ✓ সার্টিফাইড সোসাইটি
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-12 h-12 rounded-xl bg-red-100 text-red-600 font-black text-xl flex items-center justify-center">
+            স
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">সন্ধানী জাতীয় রক্তদান সংস্থা</h3>
+            <p class="text-xs text-emerald-600 font-bold">ভেরিফাইড সংগঠন • ১৯৭৭</p>
+          </div>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed mb-4">
+          বাংলাদেশের মেডিকেল কলেজের শিক্ষার্থীদের দ্বারা পরিচালিত ঐতিহ্যবাহী স্বেচ্ছাসেবী রক্তদান আন্দোলন।
+        </p>
+        <div class="bg-slate-50 p-2.5 rounded-xl text-xs flex justify-between font-bold text-slate-700">
+          <span>মোট ক্যাম্পেইন: ১,৪২০+</span>
+          <span class="text-red-600">হটলাইন: 02-9661051</span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 font-black text-xl flex items-center justify-center">
+            বাঁ
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">বাঁধন (স্বেচ্ছায় রক্তদাতাদের সংগঠন)</h3>
+            <p class="text-xs text-emerald-600 font-bold">ভেরিফাইড সংগঠন • ১৯৯৭</p>
+          </div>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed mb-4">
+          ঢাকা বিশ্ববিদ্যালয়সহ বাংলাদেশের পাবলিক বিশ্ববিদ্যালয় ভিত্তিক স্বেচ্ছাসেবী রক্তদান সংস্থা।
+        </p>
+        <div class="bg-slate-50 p-2.5 rounded-xl text-xs flex justify-between font-bold text-slate-700">
+          <span>মোট ক্যাম্পেইন: ৯৮০+</span>
+          <span class="text-red-600">হটলাইন: 02-9661900</span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 font-black text-xl flex items-center justify-center">
+            কো
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">কোয়ান্টাম স্বেচ্ছাসেবী রক্তদান ল্যাব</h3>
+            <p class="text-xs text-emerald-600 font-bold">ভেরিফাইড সংগঠন • ২০০০</p>
+          </div>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed mb-4">
+          অত্যাধুনিক রক্ত উপাদান পৃথকীকরণ (Platelets, Plasma) ও নিরাপদ রক্ত স্ক্রিনিং কার্যক্রম।
+        </p>
+        <div class="bg-slate-50 p-2.5 rounded-xl text-xs flex justify-between font-bold text-slate-700">
+          <span>মোট ক্যাম্পেইন: ২,১৫০+</span>
+          <span class="text-red-600">হটলাইন: 01714-010869</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 11. NATIONAL LEADERBOARD                   -->
+  <!-- ========================================== -->
+  <section id="leaderboard" class="max-w-7xl mx-auto px-4 sm:px-6 mt-20">
+    <div class="bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 rounded-3xl p-6 sm:p-10 text-white shadow-xl mb-6">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-xs font-bold uppercase tracking-wider mb-2">
+        <i data-lucide="trophy" class="w-3.5 h-3.5 text-yellow-300"></i>
+        <span>জাতীয় সম্মাননা তালিকা</span>
+      </div>
+      <h2 class="text-2xl sm:text-4xl font-black">জাতীয় রক্তদাতা লিডারবোর্ড</h2>
+      <p class="text-xs sm:text-sm text-amber-100 mt-1">
+        যাঁদের রক্তে বেঁচেছে সহস্র জীবন। নিয়মিত ও সর্বোচ্চ রক্তদানকারী বীর যোদ্ধাদের সম্মাননা তালিকা।
+      </p>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden divide-y divide-slate-100">
+      <div class="p-4 sm:p-5 flex items-center justify-between gap-4 bg-slate-50">
+        <div class="flex items-center gap-4">
+          <span class="w-8 h-8 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-black text-sm shadow">🥇</span>
+          <div>
+            <h4 class="font-bold text-base text-slate-900">আরিফুল ইসলাম</h4>
+            <p class="text-xs text-slate-400">সিলেট সদর • গ্রুপ: <strong class="text-red-600">O-</strong></p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-2xl font-black text-red-600 leading-tight">২৬</span>
+          <span class="text-[10px] text-slate-400 uppercase font-bold block">বার রক্তদান (Legend)</span>
+        </div>
+      </div>
+
+      <div class="p-4 sm:p-5 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <span class="w-8 h-8 rounded-full bg-slate-300 text-slate-900 flex items-center justify-center font-black text-sm shadow">🥈</span>
+          <div>
+            <h4 class="font-bold text-base text-slate-900">মাহমুদুর রহমান</h4>
+            <p class="text-xs text-slate-400">ধানমন্ডি, ঢাকা • গ্রুপ: <strong class="text-red-600">O+</strong></p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-2xl font-black text-red-600 leading-tight">১৬</span>
+          <span class="text-[10px] text-slate-400 uppercase font-bold block">বার রক্তদান (Super Hero)</span>
+        </div>
+      </div>
+
+      <div class="p-4 sm:p-5 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <span class="w-8 h-8 rounded-full bg-amber-700 text-white flex items-center justify-center font-black text-sm shadow">🥉</span>
+          <div>
+            <h4 class="font-bold text-base text-slate-900">তানভীর হোসেন</h4>
+            <p class="text-xs text-slate-400">কোতোয়ালী, চট্টগ্রাম • গ্রুপ: <strong class="text-red-600">B+</strong></p>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-2xl font-black text-red-600 leading-tight">১২</span>
+          <span class="text-[10px] text-slate-400 uppercase font-bold block">বার রক্তদান (Life Saver)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 12. CAMPAIGNS & EVENTS                     -->
+  <!-- ========================================== -->
+  <section id="campaigns" class="max-w-7xl mx-auto px-4 sm:px-6 mt-20">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div>
+        <div class="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">রক্তদান ইভেন্ট</div>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900">আসন্ন রক্তদান ক্যাম্পেইনসমূহ</h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="bg-red-100 text-red-700 font-bold text-xs px-3 py-1 rounded-full">১৪ নভেম্বর, ২০২৬</span>
+          <span class="text-xs text-slate-400">সকাল ৯:০০ - বিকেল ৫:০০</span>
+        </div>
+        <h3 class="font-bold text-lg text-slate-900">বিশ্ব রক্তদাতা দিবস জাতীয় মেগা ক্যাম্পেইন</h3>
+        <p class="text-xs text-slate-600">
+          বঙ্গবন্ধু আন্তর্জাতিক সম্মেলন কেন্দ্র (BICC), আগারগাঁও, ঢাকা। বিনামূল্যে রক্তের গ্রুপ পরীক্ষা ও রক্তদান।
+        </p>
+        <div class="pt-2 flex justify-between items-center text-xs border-t border-slate-100">
+          <span class="text-slate-500 font-bold">লক্ষ্যমাত্রা: ৫০০ ব্যাগ</span>
+          <button onclick="alert('ক্যাম্পেইনে অংশ নেওয়ার জন্য ধন্যবাদ! আপনার নাম নিবন্ধিত হয়েছে।')" class="px-4 py-2 bg-slate-900 hover:bg-red-600 text-white rounded-xl font-bold transition">
+            অংশগ্রহণ করুন
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="bg-red-100 text-red-700 font-bold text-xs px-3 py-1 rounded-full">২০ নভেম্বর, ২০২৬</span>
+          <span class="text-xs text-slate-400">সকাল ১০:০০ - বিকেল ৪:০০</span>
+        </div>
+        <h3 class="font-bold text-lg text-slate-900">চট্টগ্রাম বিভাগীয় জরুরি রক্তদান মেলা</h3>
+        <p class="text-xs text-slate-600">
+          সিএমসিএইচ অডিটোরিয়াম চত্বর, চট্টগ্রাম। সন্ধানী সিএমসিএইচ ইউনিট ও রক্ত চাই যৌথ উদ্যোগ।
+        </p>
+        <div class="pt-2 flex justify-between items-center text-xs border-t border-slate-100">
+          <span class="text-slate-500 font-bold">লক্ষ্যমাত্রা: ১৫০ ব্যাগ</span>
+          <button onclick="alert('ক্যাম্পেইনে অংশ নেওয়ার জন্য ধন্যবাদ! আপনার নাম নিবন্ধিত হয়েছে।')" class="px-4 py-2 bg-slate-900 hover:bg-red-600 text-white rounded-xl font-bold transition">
+            অংশগ্রহণ করুন
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 13. FAQ SECTION                            -->
+  <!-- ========================================== -->
+  <section id="faq" class="max-w-7xl mx-auto px-4 sm:px-6 mt-20">
+    <div class="bg-slate-900 text-white rounded-3xl p-6 sm:p-12 space-y-6">
+      <div class="text-center space-y-2 max-w-xl mx-auto">
+        <span class="text-xs font-bold text-red-500 uppercase tracking-wider">জরুরি সচেতনতা</span>
+        <h2 class="text-2xl sm:text-4xl font-black">রক্তদান সম্পর্কিত সাধারণ প্রশ্ন ও উত্তর</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 space-y-2">
+          <h4 class="font-bold text-red-400">কে রক্ত দিতে পারবেন?</h4>
+          <p class="text-slate-300 leading-relaxed">
+            ১৮ থেকে ৬০ বছর বয়সী যেকোনো সুস্থ ব্যক্তি যার ওজন কমপক্ষে ৪৫ কেজি এবং রক্তচাপ ও হিমোগ্লোবিন স্বাভাবিক, তিনি রক্ত দিতে পারেন।
+          </p>
+        </div>
+        <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 space-y-2">
+          <h4 class="font-bold text-emerald-400">কত দিন পর পর রক্ত দেওয়া যায়?</h4>
+          <p class="text-slate-300 leading-relaxed">
+            সুস্থ পুরুষ প্রতি ৯০ দিন (৩ মাস) পর এবং নারী প্রতি ১২০ দিন (৪ মাস) পর পর রক্তদান করতে পারেন।
+          </p>
+        </div>
+        <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 space-y-2">
+          <h4 class="font-bold text-cyan-400">আমার ফোন নম্বর কি সবাই দেখতে পারবে?</h4>
+          <p class="text-slate-300 leading-relaxed">
+            না। ডিফল্টভাবে আপনার অনুমতি ছাড়া কেউ আপনার নম্বর পাবে না। যোগাযোগের আবেদন গ্রহণ করলেই নম্বর দৃশ্যমান হবে।
+          </p>
+        </div>
+        <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 space-y-2">
+          <h4 class="font-bold text-amber-400">ডিজিটাল আইডি কীভাবে কাজ করে?</h4>
+          <p class="text-slate-300 leading-relaxed">
+            প্রত্যেক সদস্যের জন্য তৈরি স্বতন্ত্র কিউআর কোড স্ক্যান করে যেকোনো হাসপাতাল বা কেন্দ্রে কার্ডের সত্যতা যাচাই করা যায়।
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 14. FOOTER                                 -->
+  <!-- ========================================== -->
+  <footer class="mt-20 bg-slate-950 text-slate-300 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8 text-xs">
+      <div class="md:col-span-2 space-y-3">
+        <div class="inline-flex items-center bg-white px-3.5 py-1.5 rounded-2xl shadow-md border border-slate-700/60">
+          <img src="logo.png" alt="রক্ত চাই" class="h-11 object-contain">
+        </div>
+        <p class="text-slate-400 leading-relaxed max-w-sm">
+          রক্ত চাই (BloodBondhu) — বাংলাদেশের প্রতিটি জেলা ও উপজেলায় স্বেচ্ছাসেবী রক্তদাতা, হাসপাতাল ও মুমূর্ষু রোগীর মধ্যে একটি নিরাপদ ডিজিটাল সেতু।
+        </p>
+        <p class="text-emerald-400 font-bold">✓ সার্বক্ষণিক জাতীয় স্বাস্থ্য হেল্পলাইন: ১৬২৬৩</p>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-white uppercase tracking-wider mb-3">দ্রুত লিঙ্ক</h4>
+        <ul class="space-y-2 text-slate-400">
+          <li><a href="#search" class="hover:text-white">রক্তদাতা খুঁজুন</a></li>
+          <li><a href="#requests" class="hover:text-white">জরুরি রক্তের আবেদন</a></li>
+          <li><a href="#id-card-section" class="hover:text-white">ডিজিটাল আইডি কার্ড</a></li>
+          <li><a href="#organizations" class="hover:text-white">অনুমোদিত সংস্থা</a></li>
+          <li><a href="#leaderboard" class="hover:text-white">জাতীয় লিডারবোর্ড</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-white uppercase tracking-wider mb-3">যোগাযোগ ও সহায়তা</h4>
+        <p class="text-slate-400">জাতীয় সমন্বয় কেন্দ্র, ঢাকা, বাংলাদেশ</p>
+        <p class="text-slate-400 mt-1">ইমেইল: support@roktochai.gov.bd</p>
+        <p class="text-slate-400">হটলাইন: +880 1700-000000</p>
+      </div>
+    </div>
+
+    <div class="border-t border-slate-900 py-4 px-4 flex flex-col md:flex-row items-center justify-between text-[11px] text-slate-500 max-w-7xl mx-auto gap-3">
+      <div>
+        © ২০২৬ রক্ত চাই (BloodBondhu) — বাংলাদেশ জাতীয় রক্তদান ও ব্যবস্থাপনা নেটওয়ার্ক। সর্বস্বত্ব সংরক্ষিত।
+      </div>
+      
+      <!-- Right Side: Credits & Local Storage Info -->
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <div class="text-slate-400 font-medium flex items-center gap-1.5">
+          <span>Design &amp; Build By</span>
+          <span class="text-white font-bold tracking-wide hover:text-red-400 transition cursor-default">Al Amin Khan</span>
+        </div>
+        <span class="text-slate-700 hidden sm:inline">•</span>
+        <div class="flex items-center gap-3">
+          <span class="flex items-center gap-1 text-emerald-400 font-medium">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> LocalStorage অ্যাক্টিভ
+          </span>
+          <button onclick="resetLocalStorageData()" class="text-xs text-slate-400 hover:text-red-400 underline transition">
+            ডেমো ডাটা রিসেট
+          </button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- MODAL: EMERGENCY BLOOD REQUEST             -->
+  <!-- ========================================== -->
+  <div id="emergency-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto">
+      <button onclick="closeModal('emergency-modal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+        <i data-lucide="heart" class="w-5 h-5 text-red-600 fill-red-600"></i>
+        <h3 class="font-black text-lg text-slate-900">জরুরি রক্তের আবেদন ফরম</h3>
+      </div>
+
+      <form onsubmit="handleEmergencySubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">রোগীর নাম *</label>
+          <input type="text" id="req-patient" required placeholder="e.g. মোছাঃ সাহিদা বেগম" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">রক্তের গ্রুপ *</label>
+            <select id="req-group" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl font-bold text-red-600">
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+" selected>O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">প্রয়োজনীয় ইউনিট *</label>
+            <input type="number" id="req-units" min="1" value="1" required class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl font-bold">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">হাসপাতালের নাম *</label>
+          <input type="text" id="req-hospital" required placeholder="e.g. ঢাকা মেডিকেল কলেজ হাসপাতাল" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">হাসপাতালের ঠিকানা / জেলা *</label>
+          <input type="text" id="req-address" required placeholder="e.g. শাহবাগ, ঢাকা" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">যোগাযোগকারীর নাম *</label>
+            <input type="text" id="req-name" required placeholder="আপনার নাম" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">মোবাইল নম্বর *</label>
+            <input type="tel" id="req-phone" required placeholder="+880 1700-000000" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl font-mono">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">জরুরিতা (Priority)</label>
+          <select id="req-priority" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl font-bold">
+            <option value="urgent">Urgent (জরুরি)</option>
+            <option value="critical">Critical (অতি জরুরি - ICU)</option>
+            <option value="normal">Normal (পরিকল্পিত সার্জারি)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-sm shadow transition">
+          আবেদন ব্রডকাস্ট করুন
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: DONOR REGISTRATION                  -->
+  <!-- ========================================== -->
+  <div id="register-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto">
+      <button onclick="closeModal('register-modal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+        <i data-lucide="user-check" class="w-5 h-5 text-emerald-600"></i>
+        <h3 class="font-black text-lg text-slate-900">রক্তদাতা নিবন্ধন ফরম</h3>
+      </div>
+
+      <form onsubmit="handleRegisterSubmit(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">আপনার পূর্ণ নাম *</label>
+          <input type="text" id="reg-name" required placeholder="e.g. তানভীর আহমেদ" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">রক্তের গ্রুপ *</label>
+            <select id="reg-group" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl font-black text-red-600">
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">মোবাইল নম্বর *</label>
+            <input type="tel" id="reg-phone" required placeholder="+880 1700-000000" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl font-mono">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">বিভাগ *</label>
+            <select id="reg-div" onchange="updateRegDistricts()" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl font-medium">
+              <option value="dhaka">ঢাকা (Dhaka)</option>
+              <option value="chattogram">চট্টগ্রাম (Chattogram)</option>
+              <option value="rajshahi">রাজশাহী (Rajshahi)</option>
+              <option value="khulna">খুলনা (Khulna)</option>
+              <option value="barishal">বরিশাল (Barishal)</option>
+              <option value="sylhet">সিলেট (Sylhet)</option>
+              <option value="rangpur">রংপুর (Rangpur)</option>
+              <option value="mymensingh">ময়মনসিংহ (Mymensingh)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 uppercase mb-1">জেলা *</label>
+            <select id="reg-district" class="w-full h-10 px-3 bg-slate-50 border border-slate-300 rounded-xl font-medium">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-600">
+          ✓ নিবন্ধনের সাথে সাথে আপনার জন্য অফিসিয়াল ডিজিটাল আইডি ও সিকিউর কিউআর কোড প্রস্তুত হবে।
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow transition">
+          নিবন্ধন সম্পন্ন করুন ও ডিজিটাল আইডি নিন
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: CONTACT DONOR (PRIVACY-PROTECTED)   -->
+  <!-- ========================================== -->
+  <div id="contact-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative space-y-4">
+      <button onclick="closeModal('contact-modal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-base text-slate-900">যোগাযোগের আবেদন পাঠান</h3>
+        <p class="text-xs text-slate-500 mt-0.5">রক্তদাতা: <strong id="modal-donor-name" class="text-slate-800"></strong> (<span id="modal-donor-group" class="font-bold text-red-600"></span>)</p>
+      </div>
+
+      <div id="contact-form-body" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 uppercase mb-1">জরুরি রক্তের কারণ / বিস্তারিত *</label>
+          <textarea id="contact-reason" rows="3" placeholder="রোগীর নাম ও হাসপাতালের নাম উল্লেখ করুন..." class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs"></textarea>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-xl text-[11px] text-slate-500">
+          গোপনীয়তা সুরক্ষা: রক্তদাতার কাছে তাৎক্ষণিক নোটিফিকেশন যাবে এবং তিনি সম্মতি দিলেই কেবল তার মোবাইল নম্বর উন্মোচিত হবে।
+        </div>
+        <button onclick="submitContactRequest()" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow transition">
+          রিকুয়েস্ট পাঠিয়ে দিন
+        </button>
+      </div>
+
+      <div id="contact-success-body" class="hidden text-center py-6 space-y-2">
+        <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-xl font-bold">✓</div>
+        <h4 class="font-bold text-emerald-700 text-base">আবেদন সফলভাবে পাঠানো হয়েছে!</h4>
+        <p class="text-xs text-slate-500">রক্তদাতা সম্মতি দেওয়া মাত্রই ফোন নম্বর দৃশ্যমান হবে।</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: QR CODE VERIFICATION SIMULATOR      -->
+  <!-- ========================================== -->
+  <div id="verification-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-950 text-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative space-y-4 border border-slate-800">
+      <button onclick="closeModal('verification-modal')" class="absolute top-5 right-5 text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500 font-bold text-xl">
+          ✓
+        </div>
+        <h3 class="font-bold text-lg">ডিজিটাল আইডি যাচাই সম্পন্ন</h3>
+        <p class="text-xs text-emerald-400">AUTHENTIC NATIONAL RECORD FOUND</p>
+      </div>
+
+      <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-xs space-y-2">
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400">সদস্যের নাম:</span>
+          <span class="font-bold text-white" id="ver-name">মাহমুদুর রহমান</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400">আইডি নম্বর:</span>
+          <span class="font-mono text-amber-300 font-bold" id="ver-id">DONOR-000001</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400">রোল:</span>
+          <span class="font-bold uppercase text-cyan-400" id="ver-role">VERIFIED BLOOD DONOR</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400">রক্তের গ্রুপ:</span>
+          <span class="font-bold text-red-400" id="ver-blood">O+</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">যাচাইকৃত রক্তদান:</span>
+          <span class="font-bold text-amber-300" id="ver-donations">১৬ বার</span>
+        </div>
+      </div>
+
+      <div class="text-[10px] text-center text-slate-400">
+        নিরাপত্তা নিশ্চয়তা: ব্যক্তিগত মোবাইল নম্বর ও স্থায়ী ঠিকানা জনসমক্ষে অপ্রকাশিত রাখা হয়েছে।
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT LOGIC & CARD GENERATION         -->
+  <!-- ========================================== -->
+  <script>
+    // Lucide Icons initialization
+    lucide.createIcons();
+
+    // ==========================================
+    // 1. BANGLADESH 64 DISTRICTS DATA MAP
+    // ==========================================
+    const bdDistricts = {
+      dhaka: [
+        { id: 'dhaka', bn: 'ঢাকা', en: 'Dhaka' },
+        { id: 'gazipur', bn: 'গাজীপুর', en: 'Gazipur' },
+        { id: 'narayanganj', bn: 'নারায়ণগঞ্জ', en: 'Narayanganj' },
+        { id: 'tangail', bn: 'টাঙ্গাইল', en: 'Tangail' },
+        { id: 'narsingdi', bn: 'নরসিংদী', en: 'Narsingdi' },
+        { id: 'faridpur', bn: 'ফরিদপুর', en: 'Faridpur' },
+        { id: 'gopalganj', bn: 'গোপালগঞ্জ', en: 'Gopalganj' },
+        { id: 'kishoreganj', bn: 'কিশোরগঞ্জ', en: 'Kishoreganj' },
+        { id: 'madaripur', bn: 'মাদারীপুর', en: 'Madaripur' },
+        { id: 'manikganj', bn: 'মানিকগঞ্জ', en: 'Manikganj' },
+        { id: 'munshiganj', bn: 'মুন্সীগঞ্জ', en: 'Munshiganj' },
+        { id: 'rajbari', bn: 'রাজবাড়ী', en: 'Rajbari' },
+        { id: 'shariatpur', bn: 'শরীয়তপুর', en: 'Shariatpur' }
+      ],
+      chattogram: [
+        { id: 'chattogram', bn: 'চট্টগ্রাম', en: 'Chattogram' },
+        { id: 'coxsbazar', bn: 'কক্সবাজার', en: "Cox's Bazar" },
+        { id: 'cumilla', bn: 'কুমিল্লা', en: 'Cumilla' },
+        { id: 'brahmanbaria', bn: 'ব্রাহ্মণবাড়িয়া', en: 'Brahmanbaria' },
+        { id: 'chandpur', bn: 'চাঁদপুর', en: 'Chandpur' },
+        { id: 'noakhali', bn: 'নোয়াখালী', en: 'Noakhali' },
+        { id: 'feni', bn: 'ফেনী', en: 'Feni' },
+        { id: 'lakshmipur', bn: 'লক্ষ্মীপুর', en: 'Lakshmipur' },
+        { id: 'rangamati', bn: 'রাঙ্গামাটি', en: 'Rangamati' },
+        { id: 'bandarban', bn: 'বান্দরবান', en: 'Bandarban' },
+        { id: 'khagrachhari', bn: 'খাগড়াছড়ি', en: 'Khagrachhari' }
+      ],
+      rajshahi: [
+        { id: 'rajshahi', bn: 'রাজশাহী', en: 'Rajshahi' },
+        { id: 'bogura', bn: 'বগুড়া', en: 'Bogura' },
+        { id: 'pabna', bn: 'পাবনা', en: 'Pabna' },
+        { id: 'sirajganj', bn: 'সিরাজগঞ্জ', en: 'Sirajganj' },
+        { id: 'naogaon', bn: 'নওগাঁ', en: 'Naogaon' },
+        { id: 'natore', bn: 'নাটোর', en: 'Natore' },
+        { id: 'chapainawabganj', bn: 'চাঁপাইনবাবগঞ্জ', en: 'Chapai Nawabganj' },
+        { id: 'joypurhat', bn: 'জয়পুরহাট', en: 'Joypurhat' }
+      ],
+      khulna: [
+        { id: 'khulna', bn: 'খুলনা', en: 'Khulna' },
+        { id: 'jashore', bn: 'যশোর', en: 'Jashore' },
+        { id: 'kushtia', bn: 'কুষ্টিয়া', en: 'Kushtia' },
+        { id: 'jhenaidah', bn: 'ঝিনাইদহ', en: 'Jhenaidah' },
+        { id: 'satkhira', bn: 'সাতক্ষীরা', en: 'Satkhira' },
+        { id: 'bagerhat', bn: 'বাগেরহাট', en: 'Bagerhat' },
+        { id: 'chuadanga', bn: 'চুয়াডাঙ্গা', en: 'Chuadanga' },
+        { id: 'meherpur', bn: 'মেহেরপুর', en: 'Meherpur' },
+        { id: 'magura', bn: 'মাগুরা', en: 'Magura' },
+        { id: 'narail', bn: 'নড়াইল', en: 'Narail' }
+      ],
+      barishal: [
+        { id: 'barishal', bn: 'বরিশাল', en: 'Barishal' },
+        { id: 'patuakhali', bn: 'পটুয়াখালী', en: 'Patuakhali' },
+        { id: 'bhola', bn: 'ভোলা', en: 'Bhola' },
+        { id: 'pirojpur', bn: 'পিরোজপুর', en: 'Pirojpur' },
+        { id: 'barguna', bn: 'বরগুনা', en: 'Barguna' },
+        { id: 'jhalakathi', bn: 'ঝালকাঠি', en: 'Jhalakathi' }
+      ],
+      sylhet: [
+        { id: 'sylhet', bn: 'সিলেট', en: 'Sylhet' },
+        { id: 'moulvibazar', bn: 'মৌলভীবাজার', en: 'Moulvibazar' },
+        { id: 'habiganj', bn: 'হবিগঞ্জ', en: 'Habiganj' },
+        { id: 'sunamganj', bn: 'সুনামগঞ্জ', en: 'Sunamganj' }
+      ],
+      rangpur: [
+        { id: 'rangpur', bn: 'রংপুর', en: 'Rangpur' },
+        { id: 'dinajpur', bn: 'দিনাজপুর', en: 'Dinajpur' },
+        { id: 'gaibandha', bn: 'গাইবান্ধা', en: 'Gaibandha' },
+        { id: 'kurigram', bn: 'কুড়িগ্রাম', en: 'Kurigram' },
+        { id: 'lalmonirhat', bn: 'লালমনিরহাট', en: 'Lalmonirhat' },
+        { id: 'nilphamari', bn: 'নীলফামারী', en: 'Nilphamari' },
+        { id: 'panchagarh', bn: 'পঞ্চগড়', en: 'Panchagarh' },
+        { id: 'thakurgaon', bn: 'ঠাকুরগাঁও', en: 'Thakurgaon' }
+      ],
+      mymensingh: [
+        { id: 'mymensingh', bn: 'ময়মনসিংহ', en: 'Mymensingh' },
+        { id: 'jamalpur', bn: 'জামালপুর', en: 'Jamalpur' },
+        { id: 'sherpur', bn: 'শেরপুর', en: 'Sherpur' },
+        { id: 'netrokona', bn: 'নেত্রকোণা', en: 'Netrokona' }
+      ]
+    };
+
+    // Helper: Get all 64 districts in a single list
+    function getAllDistricts() {
+      const all = [];
+      Object.keys(bdDistricts).forEach(div => {
+        bdDistricts[div].forEach(dist => all.push({ ...dist, division: div }));
+      });
+      return all;
+    }
+
+    // Populate search filter districts
+    function updateDistricts() {
+      const selectedDiv = document.getElementById('search-division').value;
+      const distSelect = document.getElementById('search-district');
+      distSelect.innerHTML = '<option value="">সকল জেলা (All Districts)</option>';
+
+      const list = selectedDiv ? (bdDistricts[selectedDiv] || []) : getAllDistricts();
+      list.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = `${d.bn} (${d.en})`;
+        distSelect.appendChild(opt);
+      });
+    }
+
+    // Populate registration modal districts
+    function updateRegDistricts() {
+      const selectedDiv = document.getElementById('reg-div').value;
+      const distSelect = document.getElementById('reg-district');
+      distSelect.innerHTML = '';
+
+      const list = bdDistricts[selectedDiv] || [];
+      list.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = `${d.bn} (${d.en})`;
+        distSelect.appendChild(opt);
+      });
+    }
+
+    // ==========================================
+    // 2. LOCALSTORAGE PERSISTENCE ENGINE
+    // ==========================================
+    const STORAGE_KEY_DONORS = 'blood_chai_donors_v1';
+    const STORAGE_KEY_REQUESTS = 'blood_chai_requests_v1';
+    const STORAGE_KEY_PLEDGES = 'blood_chai_pledges_v1';
+
+    const defaultDonors = [
+      {
+        id: 'DONOR-000001',
+        name: 'মাহমুদুর রহমান',
+        blood: 'O+',
+        phone: '+880 1711-223344',
+        division: 'dhaka',
+        district: 'dhaka',
+        areaText: 'ধানমন্ডি, ঢাকা',
+        donations: '১৬ বার',
+        status: 'প্রস্তুত',
+        avatar: '👨‍💼'
+      },
+      {
+        id: 'DONOR-000002',
+        name: 'ফারহানা আক্তার',
+        blood: 'A+',
+        phone: '+880 1812-334455',
+        division: 'dhaka',
+        district: 'dhaka',
+        areaText: 'মিরপুর, ঢাকা',
+        donations: '৮ বার',
+        status: 'প্রস্তুত',
+        avatar: '👩‍⚕️'
+      },
+      {
+        id: 'DONOR-000003',
+        name: 'তানভীর হোসেন',
+        blood: 'B+',
+        phone: '+880 1913-445566',
+        division: 'chattogram',
+        district: 'chattogram',
+        areaText: 'কোতোয়ালী, চট্টগ্রাম',
+        donations: '১২ বার',
+        status: 'প্রস্তুত',
+        avatar: '👨‍💻'
+      },
+      {
+        id: 'DONOR-000005',
+        name: 'আরিফুল ইসলাম',
+        blood: 'O-',
+        phone: '+880 1714-556677',
+        division: 'sylhet',
+        district: 'sylhet',
+        areaText: 'জিন্দাবাজার, সিলেট',
+        donations: '২৬ বার (Legend)',
+        status: 'প্রস্তুত',
+        avatar: '👨‍🏫'
+      }
+    ];
+
+    const defaultRequests = [
+      {
+        id: 'REQ-0001',
+        patient: 'তাহমিনা বেগম (৪৮ বছর)',
+        reason: 'ওপেন হার্ট বাইপাস সার্জারি',
+        group: 'O+',
+        units: '২ ব্যাগ',
+        hospital: 'ঢাকা মেডিকেল কলেজ হাসপাতাল (DMCH)',
+        address: 'শাহবাগ, ঢাকা',
+        phone: '+880 1712-345678',
+        priority: 'CRITICAL',
+        priorityClass: 'bg-red-600 text-white animate-pulse',
+        timeText: 'আজ • সকাল ১০:০০'
+      },
+      {
+        id: 'REQ-0002',
+        patient: 'শিশু আয়ান (৬ বছর)',
+        reason: 'থ্যালাসেমিয়া নিয়মিত রক্ত পরিসঞ্চালন',
+        group: 'B+',
+        units: '১ ব্যাগ',
+        hospital: 'চট্টগ্রাম মেডিকেল কলেজ হাসপাতাল (CMCH)',
+        address: 'পাঁচলাইশ, চট্টগ্রাম',
+        phone: '+880 1819-876543',
+        priority: 'URGENT',
+        priorityClass: 'bg-amber-100 text-amber-800',
+        timeText: 'আগামীকাল • দুপুর ৩:০০'
+      },
+      {
+        id: 'REQ-0003',
+        patient: 'জান্নাতুল ফেরদৌস (২৭ বছর)',
+        reason: 'সিজারিয়ান ডেলিভারি অপারেশন',
+        group: 'AB+',
+        units: '১ ব্যাগ',
+        hospital: 'বিএসএমএমইউ (পিজি হাসপাতাল)',
+        address: 'শাহবাগ, ঢাকা',
+        phone: '+880 1913-445566',
+        priority: 'NORMAL',
+        priorityClass: 'bg-blue-100 text-blue-800',
+        timeText: '৪ নভেম্বর • সকাল ১১:৩০'
+      }
+    ];
+
+    function getStoredDonors() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_DONORS);
+        return raw ? JSON.parse(raw) : defaultDonors;
+      } catch (e) {
+        return defaultDonors;
+      }
+    }
+
+    function saveStoredDonors(list) {
+      localStorage.setItem(STORAGE_KEY_DONORS, JSON.stringify(list));
+    }
+
+    function getStoredRequests() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_REQUESTS);
+        return raw ? JSON.parse(raw) : defaultRequests;
+      } catch (e) {
+        return defaultRequests;
+      }
+    }
+
+    function saveStoredRequests(list) {
+      localStorage.setItem(STORAGE_KEY_REQUESTS, JSON.stringify(list));
+    }
+
+    function resetLocalStorageData() {
+      if (confirm('আপনি কি সমস্ত লোকাল ডেমো ডাটা রিসেট করে ডিফল্ট অবস্থায় ফিরিয়ে নিতে চান?')) {
+        localStorage.removeItem(STORAGE_KEY_DONORS);
+        localStorage.removeItem(STORAGE_KEY_REQUESTS);
+        localStorage.removeItem(STORAGE_KEY_PLEDGES);
+        localStorage.removeItem('blood_chai_active_role');
+        location.reload();
+      }
+    }
+
+    // Number converter to Bengali digits
+    function toBengaliDigits(num) {
+      const bnDigits = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+      return String(num).replace(/[0-9]/g, d => bnDigits[d]);
+    }
+
+    function updateLiveStats() {
+      const donors = getStoredDonors();
+      const requests = getStoredRequests();
+
+      const donorsCountEl = document.getElementById('stat-donors-count');
+      const requestsCountEl = document.getElementById('stat-requests-count');
+
+      if (donorsCountEl) {
+        const total = 18450 + (donors.length - defaultDonors.length);
+        donorsCountEl.innerText = `${toBengaliDigits(total)}+`;
+      }
+      if (requestsCountEl) {
+        requestsCountEl.innerText = `${toBengaliDigits(requests.length)}টি`;
+      }
+    }
+
+    // ==========================================
+    // 3. RENDER DONORS & EMERGENCY REQUESTS
+    // ==========================================
+    function renderDonors(list) {
+      const container = document.getElementById('donors-grid');
+      if (!container) return;
+
+      container.innerHTML = '';
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-500 bg-white rounded-3xl border border-slate-200">
+            <p class="font-bold text-base">আপনার ফিল্টার অনুযায়ী কোনো রক্তদাতা পাওয়া যায়নি।</p>
+            <p class="text-xs text-slate-400 mt-1">অনুগ্রহ করে অন্য জেলা বা রক্তের গ্রুপ নির্বাচন করে চেষ্টা করুন।</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.forEach(donor => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between donor-item';
+        card.setAttribute('data-group', donor.blood);
+        card.setAttribute('data-division', donor.division);
+        card.setAttribute('data-district', donor.district);
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center gap-3">
+              <div class="relative">
+                <div class="w-14 h-14 rounded-full border-2 border-red-500 overflow-hidden bg-slate-100 flex items-center justify-center font-bold text-xl">
+                  ${donor.avatar || '🩸'}
+                </div>
+                <span class="absolute -bottom-1 -right-1 bg-red-600 text-white font-black text-xs px-1.5 py-0.5 rounded-md border border-white shadow">${donor.blood}</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <h3 class="font-bold text-base text-slate-900 truncate">${donor.name}</h3>
+                <p class="text-xs text-slate-500 flex items-center gap-1 truncate">
+                  <i data-lucide="map-pin" class="w-3 h-3 text-slate-400 flex-shrink-0"></i> ${donor.areaText}
+                </p>
+              </div>
+            </div>
+            <div class="mt-4 bg-slate-50 rounded-xl p-3 space-y-1.5 text-xs">
+              <div class="flex justify-between text-slate-600">
+                <span>যাচাইকৃত দান:</span>
+                <span class="font-bold text-red-600">${donor.donations}</span>
+              </div>
+              <div class="flex justify-between text-slate-600">
+                <span>আইডি:</span>
+                <span class="font-mono text-slate-500 font-bold">${donor.id}</span>
+              </div>
+              <div class="flex justify-between text-slate-600">
+                <span>স্ট্যাটাস:</span>
+                <span class="text-emerald-600 font-bold flex items-center gap-1">✓ ${donor.status}</span>
+              </div>
+            </div>
+          </div>
+          <button onclick="openContactModal('${donor.name}', '${donor.blood}', '${donor.id}')" class="mt-4 w-full py-2 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-700 font-bold text-xs transition">
+            যোগাযোগের আবেদন পাঠান
+          </button>
+        `;
+        container.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    function renderRequests() {
+      const container = document.getElementById('emergency-requests-container');
+      if (!container) return;
+
+      const requests = getStoredRequests();
+      container.innerHTML = '';
+
+      requests.forEach(req => {
+        const item = document.createElement('div');
+        item.className = 'bg-white rounded-3xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between';
+        item.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${req.priorityClass || 'bg-red-600 text-white'}">${req.priority}</span>
+              <span class="text-xs font-mono text-slate-400">${req.timeText || 'সদ্য প্রকাশিত'}</span>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-14 h-14 rounded-2xl bg-red-50 border border-red-200 flex flex-col items-center justify-center flex-shrink-0">
+                <span class="text-2xl font-black text-red-600">${req.group}</span>
+                <span class="text-[10px] text-red-500 font-bold">${req.units}</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <h3 class="font-bold text-base text-slate-900 leading-snug truncate">${req.patient}</h3>
+                <p class="text-xs text-slate-500 font-medium truncate">${req.reason || 'জরুরি রক্তের আবেদন'}</p>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 space-y-1 text-xs text-slate-600">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i>
+                <span class="font-bold text-slate-800 truncate">${req.hospital}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-slate-400 flex-shrink-0"></i>
+                <span class="truncate">${req.address}</span>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+            <a href="tel:${req.phone}" class="text-xs font-bold text-red-600 flex items-center gap-1 hover:underline">
+              <i data-lucide="phone-call" class="w-3.5 h-3.5"></i> ${req.phone}
+            </a>
+            <button onclick="openDonatePledge('${req.patient}', '${req.group}', '${req.hospital}')" class="px-3 py-1.5 bg-slate-900 hover:bg-red-600 text-white rounded-lg text-xs font-bold transition">
+              আমি রক্ত দেবো
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+
+      lucide.createIcons();
+    }
+
+    // Filter Donors Logic
+    function filterDonors() {
+      const group = document.getElementById('search-blood-group').value;
+      const division = document.getElementById('search-division').value;
+      const district = document.getElementById('search-district').value;
+
+      const allDonors = getStoredDonors();
+      const filtered = allDonors.filter(d => {
+        if (group && d.blood !== group) return false;
+        if (division && d.division !== division) return false;
+        if (district && d.district !== district) return false;
+        return true;
+      });
+
+      renderDonors(filtered);
+    }
+
+    // ==========================================
+    // 4. DIGITAL ID CARD ROLES & 3D FLIP
+    // ==========================================
+    const cardRoles = {
+      donor: {
+        roleBadge: 'VERIFIED BLOOD DONOR',
+        roleBadgeClass: 'bg-white text-red-700',
+        frontBg: 'from-red-600 via-red-700 to-rose-900 border-red-400',
+        backBg: 'from-red-700 via-rose-900 to-slate-950 border-red-400',
+        cardNumber: 'DONOR-000001',
+        name: 'মাহমুদুর রহমান',
+        blood: 'O+',
+        area: 'Dhaka, Dhanmondi',
+        donations: '১৬ বার'
+      },
+      super_admin: {
+        roleBadge: 'SUPER ADMINISTRATOR',
+        roleBadgeClass: 'bg-amber-400 text-slate-950 border border-amber-300',
+        frontBg: 'from-slate-900 via-indigo-950 to-slate-900 border-amber-400',
+        backBg: 'from-slate-950 via-indigo-950 to-slate-950 border-amber-400',
+        cardNumber: 'SUPER-ADMIN-000001',
+        name: 'মাহমুদুর রহমান',
+        blood: 'O+',
+        area: 'National Platform Headquarters',
+        donations: '১৬ বার'
+      },
+      coordinator: {
+        roleBadge: 'DISTRICT COORDINATOR',
+        roleBadgeClass: 'bg-cyan-200 text-cyan-950 font-bold',
+        frontBg: 'from-sky-800 via-cyan-900 to-slate-900 border-cyan-400',
+        backBg: 'from-sky-900 via-slate-900 to-slate-950 border-cyan-400',
+        cardNumber: 'DIST-COORD-000001',
+        name: 'ফারহানা আক্তার',
+        blood: 'A+',
+        area: 'Dhaka District',
+        donations: '৮ বার'
+      },
+      volunteer: {
+        roleBadge: 'CERTIFIED VOLUNTEER',
+        roleBadgeClass: 'bg-emerald-100 text-emerald-900 font-bold',
+        frontBg: 'from-emerald-700 via-green-800 to-teal-950 border-emerald-400',
+        backBg: 'from-emerald-800 via-teal-950 to-slate-950 border-emerald-400',
+        cardNumber: 'VOL-000001',
+        name: 'ফারহানা আক্তার',
+        blood: 'A+',
+        area: 'Dhaka Metropolitan',
+        donations: '৮ বার'
+      }
+    };
+
+    let activeRole = 'donor';
+    let isFlipped = false;
+
+    function switchCardRole(role) {
+      activeRole = role;
+      const data = cardRoles[role];
+      if (!data) return;
+
+      const front = document.getElementById('card-front');
+      const back = document.getElementById('card-back');
+
+      if (front) {
+        front.className = `absolute inset-0 rounded-2xl p-4 shadow-2xl text-white overflow-hidden border bg-gradient-to-br ${data.frontBg} backface-hidden flex flex-col justify-between`;
+      }
+      if (back) {
+        back.className = `absolute inset-0 rounded-2xl p-4 shadow-2xl text-slate-100 overflow-hidden border bg-gradient-to-br ${data.backBg} backface-hidden rotate-y-180 flex flex-col justify-between`;
+      }
+
+      document.getElementById('card-role-badge').innerText = data.roleBadge;
+      document.getElementById('card-role-badge').className = `px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${data.roleBadgeClass}`;
+      document.getElementById('card-id-number').innerText = data.cardNumber;
+      document.getElementById('card-name').innerText = data.name;
+      document.getElementById('card-area').innerText = data.area;
+      document.getElementById('card-blood-badge').innerText = data.blood;
+      document.getElementById('card-donations-count').innerText = data.donations;
+
+      const backUrl = document.getElementById('card-back-url');
+      if (backUrl) {
+        backUrl.innerText = `https://roktochai.gov.bd/verify/${data.cardNumber}`;
+      }
+
+      // Update role buttons
+      ['donor', 'super_admin', 'coordinator', 'volunteer'].forEach(r => {
+        const btn = document.getElementById(`btn-role-${r}`);
+        if (btn) {
+          if (r === role) {
+            btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-red-600 text-white shadow';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700';
+          }
+        }
+      });
+
+      renderQRCode(`https://roktochai.gov.bd/verify/${data.cardNumber}`);
+    }
+
+    // 3D Card Flip Animation
+    function flipCard() {
+      isFlipped = !isFlipped;
+      const card = document.getElementById('printable-id-card');
+      const btnText = document.getElementById('flip-btn-text');
+
+      if (card) {
+        if (isFlipped) {
+          card.classList.add('rotate-y-180');
+        } else {
+          card.classList.remove('rotate-y-180');
+        }
+      }
+      if (btnText) {
+        btnText.innerText = isFlipped ? 'সামনের অংশ দেখুন (Front)' : 'পেছনের অংশ দেখুন (Flip)';
+      }
+    }
+
+    // QR Code rendering in card
+    function renderQRCode(text) {
+      const container = document.getElementById('qrcode-container');
+      if (!container) return;
+      container.innerHTML = '';
+      new QRCode(container, {
+        text: text,
+        width: 64,
+        height: 64,
+        colorDark: "#152238",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    // Download Card as PNG
+    function downloadCardPNG() {
+      const targetSide = isFlipped ? document.getElementById('card-back') : document.getElementById('card-front');
+      if (!targetSide) return;
+
+      html2canvas(targetSide, { scale: 3, useCORS: true, logging: false }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `${cardRoles[activeRole].cardNumber}-${isFlipped ? 'back' : 'front'}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(err => {
+        console.error('PNG export error:', err);
+        alert('কার্ড ডাউনলোড করার সময় একটি সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
+      });
+    }
+
+    // Download Card as PDF (Credit card standard 85.6mm x 54mm)
+    function downloadCardPDF() {
+      const targetSide = isFlipped ? document.getElementById('card-back') : document.getElementById('card-front');
+      if (!targetSide) return;
+
+      html2canvas(targetSide, { scale: 3, useCORS: true, logging: false }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'mm',
+          format: [85.6, 54]
+        });
+        pdf.addImage(imgData, 'PNG', 0, 0, 85.6, 54);
+        pdf.save(`${cardRoles[activeRole].cardNumber}-${isFlipped ? 'back' : 'front'}.pdf`);
+      }).catch(err => {
+        console.error('PDF export error:', err);
+        alert('পিডিএফ প্রস্তুত করার সময় একটি সমস্যা হয়েছে।');
+      });
+    }
+
+    // ==========================================
+    // 5. MODAL & USER ACTIONS WITH STORAGE
+    // ==========================================
+    let currentLang = 'bn';
+    function toggleLanguage() {
+      currentLang = currentLang === 'bn' ? 'en' : 'bn';
+      document.querySelectorAll('.lang-bn').forEach(el => el.classList.toggle('hidden', currentLang === 'en'));
+      document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('hidden', currentLang === 'bn'));
+      document.getElementById('lang-btn-text').innerText = currentLang === 'bn' ? 'English' : 'বাংলা';
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    function openModal(id) {
+      const m = document.getElementById(id);
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
+    }
+
+    // Verification Modal
+    function openVerificationModal() {
+      const data = cardRoles[activeRole];
+      document.getElementById('ver-name').innerText = data.name;
+      document.getElementById('ver-id').innerText = data.cardNumber;
+      document.getElementById('ver-role').innerText = data.roleBadge;
+      document.getElementById('ver-blood').innerText = data.blood;
+      document.getElementById('ver-donations').innerText = data.donations;
+      openModal('verification-modal');
+    }
+
+    // Contact Modal
+    function openContactModal(name, blood, id) {
+      document.getElementById('modal-donor-name').innerText = name;
+      document.getElementById('modal-donor-group').innerText = blood;
+      document.getElementById('contact-form-body').classList.remove('hidden');
+      document.getElementById('contact-success-body').classList.add('hidden');
+      document.getElementById('contact-reason').value = '';
+      openModal('contact-modal');
+    }
+
+    function submitContactRequest() {
+      const reason = document.getElementById('contact-reason').value;
+      if (!reason.trim()) {
+        alert('অনুগ্রহ করে রক্তের কারণ উল্লেখ করুন।');
+        return;
+      }
+
+      // Record in LocalStorage pledges/contacts
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_PLEDGES);
+        const pledges = raw ? JSON.parse(raw) : [];
+        pledges.push({
+          type: 'contact_request',
+          donor: document.getElementById('modal-donor-name').innerText,
+          blood: document.getElementById('modal-donor-group').innerText,
+          reason: reason,
+          time: new Date().toISOString()
+        });
+        localStorage.setItem(STORAGE_KEY_PLEDGES, JSON.stringify(pledges));
+      } catch (e) {}
+
+      document.getElementById('contact-form-body').classList.add('hidden');
+      document.getElementById('contact-success-body').classList.remove('hidden');
+      setTimeout(() => {
+        closeModal('contact-modal');
+      }, 2000);
+    }
+
+    // Emergency Requisition Form submit
+    function handleEmergencySubmit(e) {
+      e.preventDefault();
+      const patient = document.getElementById('req-patient').value;
+      const group = document.getElementById('req-group').value;
+      const units = document.getElementById('req-units').value;
+      const hospital = document.getElementById('req-hospital').value;
+      const address = document.getElementById('req-address').value;
+      const phone = document.getElementById('req-phone').value;
+      const priority = document.getElementById('req-priority').value.toUpperCase();
+
+      const newReq = {
+        id: `REQ-${Date.now().toString().slice(-4)}`,
+        patient: patient,
+        reason: 'জরুরি রক্তের আবেদন',
+        group: group,
+        units: `${units} ব্যাগ`,
+        hospital: hospital,
+        address: address,
+        phone: phone,
+        priority: priority,
+        priorityClass: priority === 'CRITICAL' ? 'bg-red-600 text-white animate-pulse' : (priority === 'URGENT' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'),
+        timeText: 'সদ্য প্রকাশিত'
+      };
+
+      const requests = getStoredRequests();
+      requests.unshift(newReq);
+      saveStoredRequests(requests);
+
+      renderRequests();
+      updateLiveStats();
+      closeModal('emergency-modal');
+      e.target.reset();
+
+      alert('আপনার রক্তের আবেদনটি সফলভাবে লোকাল সিস্টেমে সংরক্ষিত ও ব্রডকাস্ট হয়েছে!');
+    }
+
+    // Register Donor
+    function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value;
+      const group = document.getElementById('reg-group').value;
+      const phone = document.getElementById('reg-phone').value;
+      const div = document.getElementById('reg-div').value;
+      const dist = document.getElementById('reg-district').value;
+
+      // Find district readable name
+      const distList = bdDistricts[div] || [];
+      const distObj = distList.find(d => d.id === dist);
+      const districtLabel = distObj ? distObj.bn : dist;
+
+      const donors = getStoredDonors();
+      const newIdNumber = `DONOR-${String(donors.length + 1).padStart(6, '0')}`;
+
+      const newDonor = {
+        id: newIdNumber,
+        name: name,
+        blood: group,
+        phone: phone,
+        division: div,
+        district: dist,
+        areaText: `${districtLabel}`,
+        donations: '০ বার (নতুন)',
+        status: 'প্রস্তুত',
+        avatar: '🩸'
+      };
+
+      donors.unshift(newDonor);
+      saveStoredDonors(donors);
+
+      // Update card preview with newly registered donor
+      cardRoles.donor.name = name;
+      cardRoles.donor.blood = group;
+      cardRoles.donor.area = districtLabel;
+      cardRoles.donor.cardNumber = newIdNumber;
+      cardRoles.donor.donations = '০ বার';
+      switchCardRole('donor');
+
+      renderDonors(donors);
+      updateLiveStats();
+
+      closeModal('register-modal');
+      e.target.reset();
+
+      alert(`অভিনন্দন ${name}! আপনার রক্তদাতা নিবন্ধন সম্পন্ন হয়েছে। আপনার ডিজিটাল আইডি ও কিউআর কোড অ্যাক্টিভ করা হয়েছে।`);
+      location.href = '#id-card-section';
+    }
+
+    // Pledge donation
+    function openDonatePledge(patient, blood, hospital) {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_PLEDGES);
+        const pledges = raw ? JSON.parse(raw) : [];
+        pledges.push({
+          type: 'donation_pledge',
+          patient: patient,
+          blood: blood,
+          hospital: hospital,
+          time: new Date().toISOString()
+        });
+        localStorage.setItem(STORAGE_KEY_PLEDGES, JSON.stringify(pledges));
+      } catch (e) {}
+
+      alert(`ধন্যবাদ! আপনি ${patient}-এর জন্য (${blood}) রক্ত দিতে সম্মতি প্রকাশ করেছেন। তথ্য সংরক্ষিত হয়েছে।`);
+    }
+
+    // ==========================================
+    // 6. INITIALIZATION ON PAGE LOAD
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Initialize districts dropdowns
+      updateDistricts();
+      updateRegDistricts();
+
+      // 2. Load stored donors or defaults
+      if (!localStorage.getItem(STORAGE_KEY_DONORS)) {
+        saveStoredDonors(defaultDonors);
+      }
+      if (!localStorage.getItem(STORAGE_KEY_REQUESTS)) {
+        saveStoredRequests(defaultRequests);
+      }
+
+      // 3. Render initial UI
+      renderDonors(getStoredDonors());
+      renderRequests();
+      updateLiveStats();
+
+      // 4. Render QR codes
+      renderQRCode('https://roktochai.gov.bd/verify/DONOR-000001');
+    });
+  </script>
+</body>
+</html>
